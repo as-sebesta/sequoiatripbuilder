@@ -32,18 +32,31 @@ const MainContent = styled.div`
   margin-bottom: 2rem;
 `;
 
-function App() {
+const App = () => {
   const [savings, setSavings] = useState<SavingsEntry[]>([]);
   const [totalSaved, setTotalSaved] = useState(0);
 
   useEffect(() => {
-    const savedData = localStorage.getItem('sequoiaSavings');
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setSavings(parsedData);
-      setTotalSaved(parsedData.reduce((acc: number, entry: SavingsEntry) => acc + entry.amount, 0));
+    try {
+      const savedData = localStorage.getItem('savingsData');
+      if (savedData) {
+        setSavings(JSON.parse(savedData));
+      }
+    } catch (error) {
+      console.warn('Unable to access localStorage:', error);
     }
   }, []);
+
+  useEffect(() => {
+    const newTotal = savings.reduce((sum, entry) => sum + entry.amount, 0);
+    setTotalSaved(newTotal);
+    
+    try {
+      localStorage.setItem('savingsData', JSON.stringify(savings));
+    } catch (error) {
+      console.warn('Unable to save to localStorage:', error);
+    }
+  }, [savings]);
 
   const addSavings = (amount: number, reason: string) => {
     const newEntry: SavingsEntry = {

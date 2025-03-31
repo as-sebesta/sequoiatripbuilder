@@ -8,4 +8,14 @@ export default defineConfig({
     open: true
   },
   base: '/sequoiatripbuilder/',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  }
 }); 
