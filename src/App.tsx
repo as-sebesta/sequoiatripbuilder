@@ -11,6 +11,8 @@ interface SavingsEntry {
   date: string;
 }
 
+const STORAGE_KEY = 'sequoiaSavings';
+
 const AppContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
@@ -38,9 +40,10 @@ const App = () => {
 
   useEffect(() => {
     try {
-      const savedData = localStorage.getItem('savingsData');
+      const savedData = localStorage.getItem(STORAGE_KEY);
       if (savedData) {
-        setSavings(JSON.parse(savedData));
+        const parsedData = JSON.parse(savedData);
+        setSavings(parsedData);
       }
     } catch (error) {
       console.warn('Unable to access localStorage:', error);
@@ -52,7 +55,7 @@ const App = () => {
     setTotalSaved(newTotal);
     
     try {
-      localStorage.setItem('savingsData', JSON.stringify(savings));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(savings));
     } catch (error) {
       console.warn('Unable to save to localStorage:', error);
     }
@@ -68,8 +71,6 @@ const App = () => {
     
     const updatedSavings = [...savings, newEntry];
     setSavings(updatedSavings);
-    setTotalSaved(totalSaved + amount);
-    localStorage.setItem('sequoiaSavings', JSON.stringify(updatedSavings));
   };
 
   const deleteEntry = (id: string) => {
@@ -78,8 +79,6 @@ const App = () => {
 
     const updatedSavings = savings.filter(entry => entry.id !== id);
     setSavings(updatedSavings);
-    setTotalSaved(totalSaved - entryToDelete.amount);
-    localStorage.setItem('sequoiaSavings', JSON.stringify(updatedSavings));
   };
 
   return (
